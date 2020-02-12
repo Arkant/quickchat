@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <title>Home</title>
+    <style>
+        body {
+            background: #fcfcfc;
+        }
+        .error {
+            color: red;
+        }
+        .whisper {
+            color: grey;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+	<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+		<h5 class="my-0 mr-md-auto">Hi, <%=name %>! (userId = <%=userId %>)</h5>
+		<nav class="my-2 my-md-0 mr-md-3">
+			<a class="p-2 text-dark" href="/">Главная</a>
+		</nav>
+		<a class="btn btn-outline-primary" href="/loggout">Выход</a>
+    </div>
+    
+	<div class="container">
+		<div class="py-5 text-center">
+			<h2>Чат программа</h2>
+			<p class="lead">Начинайте переписку</p>
+        </div>
+        <% errors.forEach(function(err){ %>
+			<div class="isa_error">
+				<i class="fa fa-times-circle"></i>
+					<%= err %>
+			 </div>
+		 <% }) %>
+		<div class="row">
+			<div class="col-6">
+				<h3>Форма сообщений</h3>
+				<form id="messForm">
+					<label for="message">Сообщение</label>
+					<textarea name="message" id="message" class="form-control" placeholder="Введите сообщение"></textarea>
+					<br>
+					<input type="submit" value="Отправить" class="btn btn-danger">
+				</form>
+			</div>
+			<div class="col-6">
+				<h3>Сообщения</h3>
+				<div id="all_mess" class="row-fluid">
+                    <% messages.forEach(function(mess){ %>
+                       <%- mess.Message %>
+                    <% }) %>
+                </div>
+			</div>
+		</div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        $(function() {
+            var socket = io.connect();
+            var form = $("#messForm");
+            var textMess = $("#message");
+            var all_messages = $("#all_mess ");
+
+            form.submit(function(e) {
+                event.preventDefault();
+                
+                socket.emit('send mess', { msg: textMess.val(), name: "<%= name %>", userID: "<%= userId %>"}, function(data) {
+                    all_messages.append("<span class='error'><div><b>" + data + "</b></div></span>");
+                });
+                textMess.val('');
+            });
+
+            socket.on('add mess', function(data) {
+                all_messages.append("<div><b>" + data.name + "</b>: " + data.msg + "</div>");
+            });
+
+            socket.on('whisper', function(data) {
+                all_messages.append("<span class='whisper'><div><b>" + data.name + "</b>: " + data.msg + "</div></span>");
+            });
+
+        });
+    </script>
+</body>
+</html>
