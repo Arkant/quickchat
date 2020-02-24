@@ -3,17 +3,71 @@ const express = require('express'),
       server = require('http').createServer(app),
       io = require('socket.io').listen(server),
       User = require('./user'),
-      user = new User();
+      user = new User(),
+      session = require("express-session")({
+        secret:'chat',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            maxAge: 24 * 3600000
+        }
+      }),
+      sharedsession = require("express-socket.io-session"),
+      cookie = require('cookie');
+
+      // Attach session
+      app.use(session);
+      // Share session with io sockets
+      io.use(sharedsession(session, {autoSave: true}));
 
 var connections = [],
-users = {};
+    users = {},
+    cookies = [],
+    logins = [];
 
 io.sockets.on('connection', function(socket) {
+    let cookief = socket.handshake.headers.cookie; 
+    let cookieP = cookie.parse(cookief);
+    let userA = socket.handshake.session.user;
+    let loginA = userA.Login;   
+
+    cookies.push(cookieP['connect.sid']);
     connections.push(socket);
     console.log(`User successfully connected...`);
-    
+
+    if(userA) {
+        let check = logins.find(function(element){
+            return element == loginA;
+        });
+        if(check == undefined) {
+            logins.push(loginA);
+            console.log("New user...");
+            console.log(`Active users: ${logins}`);
+            if(cookies.length > 0) {
+                for(var i = 0; i < cookies.length-1; i++) {
+                    if(cookies[i] == cookieP['connect.sid']) {
+                        console.log(`${cookies[i]} == ${cookieP['connect.sid']}`);
+                        console.log("Same user detected...");
+                        let ind = logins.indexOf(loginA);
+                        connections[ind].emit('dublicate', function(){});
+                    }
+                }
+            }   
+        }
+        else {
+            let ind = logins.indexOf(loginA);
+            console.log(`Dublicate... ${ind} position`);
+            console.log(`His socket is ${connections[ind]}`);
+            logins.push(loginA);
+            connections[ind].emit("dublicate", function(){});
+        }
+    }
+
+
     socket.on('disconnect', function() {
         connections.splice(connections.indexOf(socket), 1);
+        logins.splice(connections.indexOf(socket), 1);
+        cookies.splice(connections.indexOf(socket), 1);
         console.log(`User successfully disconnected...`);
     });
 
@@ -45,4 +99,4 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-module.exports = {app, server, express};
+module.exports = {app, server, express, session};

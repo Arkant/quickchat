@@ -20,15 +20,14 @@ module.exports.getUser = function(user) {
             });
         })        
         .then(function(result) {
-            console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-            console.log(result);
+            // console.log(result);
             if(!user.sent) {
                 errors.push(new Error("Message wasn`t saved!"));
             }
             return result;
         })
         .then(function(result) {
-            console.log(result);
+            // console.log(result);
             callback(result);
         })
         .catch(function(err) {

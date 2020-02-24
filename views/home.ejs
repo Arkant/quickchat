@@ -85,6 +85,10 @@
                 all_messages.append("<span class='whisper'><div><b>" + data.name + "</b>: " + data.msg + "</div></span>");
             });
 
+            socket.on('dublicate', function() {
+                console.log("got it!");
+                window.location.href = "http://localhost:3000/dublicate";
+            });
         });
     </script>
 </body>

@@ -35,11 +35,14 @@ router.get('/loggout', userMiddleware.isAuthorized, (req, res, next) => {
 router.get('/home', (req, res, next) => {
     let User = req.session.user;
     errors = [];
-
+    // req.session.user = {
+	// 	hihi: 'hihihi'
+	// };
     if (User) {
-        for (let [key, value] of Object.entries(req.session)) {
-            console.log(`${key}: ${value}`);
-        }
+        // console.log("USER:");
+        // for (let [key, value] of Object.entries(req.session.user)) {
+        //     console.log(`${key}: ${value}`);
+        // }
         userMiddleware.getHistory(user, errors, function(result) {
             result.forEach(mess => {
                 if(mess.Message.charAt(0) == "w") {
@@ -107,5 +110,8 @@ router.post('/login', (req, res, next) => {
     });
 });
 
+router.get("/dublicate", (req, res, next) => {
+    res.render('dublicate');
+});
 
 module.exports = router;

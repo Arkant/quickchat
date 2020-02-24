@@ -1,6 +1,6 @@
 const port = process.env.PORT || 3000,
       sockets = require('./core/sockets'),
-      session = require('express-session'),
+      session = sockets.session,
       bodyParser = require('body-parser'),
       app = sockets.app,
       server = sockets.server,
@@ -17,14 +17,14 @@ app.use(express.static(path.join(__dirname, 'views')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(session({
-    secret:'chat',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 24 * 3600000
-    }
-}));
+// app.use(session({
+//     secret:'chat',
+//     resave: false,
+//     saveUninitialized: false,
+//     cookie: {
+//         maxAge: 24 * 3600000
+//     }
+// }));
 
 //getting rid of the slash at the end
 app.use((req, res, next) => {
