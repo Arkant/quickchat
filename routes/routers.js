@@ -65,7 +65,6 @@ router.post('/register', (req, res, next) => {
     errors = [];
     let login = req.body.login;
     let pwd = req.body.password;
-    
     new Promise(function(resolve, reject) {
         user.create(login, pwd, function (created) {
             if (created != null) {

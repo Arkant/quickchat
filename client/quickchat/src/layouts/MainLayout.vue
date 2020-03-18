@@ -12,10 +12,9 @@
         />
 
         <q-toolbar-title>
-          Quasar App
+          Quickchat
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -30,13 +29,32 @@
           header
           class="text-grey-8"
         >
-          Essential Links
+          Navigation
         </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
+        <q-item clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="play_arrow" />
+          </q-item-section>
+          <q-item-section @click="$router.push('/login')">
+            <q-item-label>Login</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="power_settings_new" />
+          </q-item-section>
+          <q-item-section @click="$router.push('/sign-up')">
+            <q-item-label>Sign Up</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="chat" />
+          </q-item-section>
+          <q-item-section @click="$router.push('/chat')">
+            <q-item-label>Chat</q-item-label>
+          </q-item-section>
+        </q-item>
       </q-list>
     </q-drawer>
 
@@ -47,56 +65,15 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink'
-
 export default {
   name: 'MainLayout',
 
   components: {
-    EssentialLink
   },
 
   data () {
     return {
-      leftDrawerOpen: false,
-      essentialLinks: [
-        {
-          title: 'Docs',
-          caption: 'quasar.dev',
-          icon: 'school',
-          link: 'https://quasar.dev'
-        },
-        {
-          title: 'Github',
-          caption: 'github.com/quasarframework',
-          icon: 'code',
-          link: 'https://github.com/quasarframework'
-        },
-        {
-          title: 'Discord Chat Channel',
-          caption: 'chat.quasar.dev',
-          icon: 'chat',
-          link: 'https://chat.quasar.dev'
-        },
-        {
-          title: 'Forum',
-          caption: 'forum.quasar.dev',
-          icon: 'record_voice_over',
-          link: 'https://forum.quasar.dev'
-        },
-        {
-          title: 'Twitter',
-          caption: '@quasarframework',
-          icon: 'rss_feed',
-          link: 'https://twitter.quasar.dev'
-        },
-        {
-          title: 'Facebook',
-          caption: '@QuasarFramework',
-          icon: 'public',
-          link: 'https://facebook.quasar.dev'
-        }
-      ]
+      leftDrawerOpen: false
     }
   }
 }
