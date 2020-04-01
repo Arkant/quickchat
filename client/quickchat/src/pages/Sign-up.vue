@@ -11,7 +11,14 @@
             </q-form>
           </q-card-section>
           <q-card-actions class="q-px-md">
-            <q-btn @click="signUp" unelevated color="blue" size="lg" class="full-width" label="Sign Up" />
+            <q-btn
+              @click="signUp"
+              unelevated
+              :disabled="!isBtnDisabled"
+              color="blue"
+              size="lg"
+              class="full-width"
+              label="Sign Up" />
           </q-card-actions>
         </q-card>
       </div>
@@ -30,18 +37,20 @@ export default {
     }
   },
   computed: {
-    isValidPassword() {
+    isBtnDisabled () {
       return this.password === this.confirmPassword &&
         this.password !== '' &&
-        this.confirmPassword !== ''
+        this.confirmPassword !== '' &&
+        this.username !== ''
     }
   },
-  method: {
-    signUp() {
+  methods: {
+    signUp () {
       this.$store.dispatch('SIGN_UP_USER', {
-        username,
-        password
+        username: this.username,
+        password: this.password
       })
+      this.$router.push('/chat')
     }
   }
 }
