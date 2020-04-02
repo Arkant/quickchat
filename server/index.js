@@ -23,6 +23,9 @@ io.on('connection', (socket) => {
       message,
     });
   });
+.get('/db_messages') => () => [{username, message}];
+.post('/sign-up') => [{username, password}]; => username;
+.post('/login') => [{username, password}]; => username; 
 
 //   socket.on('send admin message', (msg) => {
 //     io.emit('send', msg);
