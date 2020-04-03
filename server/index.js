@@ -1,17 +1,27 @@
 const express = require('express');
-
+var cors = require('cors');
 const app = express();
-
+app.use(cors());
 const server = app.listen(3001, () => {
   console.log('server running on port 3001');
 });
 const io = require('socket.io')(server);
 const bodyParser = require('body-parser'),
-User = require('../quickchat-feature-client-ui/core/user.js'),
+session = require('express-session'),
+User = require('../core/user.js'),
 user = new User();
-
+var errors = [];
 app.use(express.urlencoded( { extended : false}));
 app.use(bodyParser.json());
+
+app.use(session({
+  secret:'chat',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+      maxAge: 24 * 3600000
+  }
+}));
 
 io.on('connection', (socket) => {
   io.emit('addition of connected user', socket.id);
@@ -28,101 +38,71 @@ io.on('connection', (socket) => {
       username,
       message,
     });
+    // user.saveMessage(idUser, message); // тут бы в DATA пробросить нужно UserID, чтобы запись в БД сделать
   });
-
-app.get('/db_messages', (req, res, next) => {
-
 });
 
 app.post('/sign-up', (req, res, next) => {
     errors = [];
-    let login = req.body.login;
+    let username = req.body.username;
     let pwd = req.body.password;
 
     new Promise(function(resolve, reject) { 
-        user.create(login, pwd, function (created) {
+        user.create(username, pwd, function (created) {
             if (created != null) {
-                user.find(login, function (result) {
-                    //req.session.user = result;
+                user.find(username, function (result) {
+                    req.session.user = result;
                     resolve(result);
-                    console.log("user has been successfully created!");
+                    //console.log("user has been successfully created!");
                 });
             } else {
-                console.log("User already exists or database error!");
+                //console.log("User already exists or database error!");
                 errors.push(new Error("User already exists!"));
                 resolve(errors);
             }
         });
     })
     .then(function(result) {
-        return result.Login ? result.Login : errors;
+      if(result.Login)
+        res.status(200).send([result,"Authenticated"]);
+      else
+        res.status(403).send([errors,"Unauthenticated"]);
     })
-    .catch(function(errors) {
-        errors.push(new Error("Can`t create a new user. Change your data or contact us! Error code" + errors));
+    .catch(function(error) {
+        errors.push(new Error("Can`t create a new user. Change your data or contact us! Error code" + error));
+        res.status(500).send(['Internal Server Error' + errors,"Unauthenticated"]);
     });  
 });
 
 app.post('/login', (req, res, next) => {
   errors = [];
-  let login = req.body.login;
+  let username = req.body.username;
   let pwd = req.body.password;
 
-  user.login(login, pwd, function(result) {
+  user.login(username, pwd, function(result) {
       if(result == 0) { // incorrect password
           errors.push(new Error('Password is incorrect!'));
+          res.status(403).send([errors,"Unauthenticated"]);
       }
       else if(result == null) { // user is not registered
           errors.push(new Error('User is not registered yet!'));
+          res.status(403).send([errors,"Unauthenticated"]);
       }
       else { // everythin is OK
           console.log("Everything is OK!");
-          //req.session.user = result;
+          res.status(200).send([result,"Authenticated"]);
+          req.session.user = result;
       }
-      return result.Login ? result.Login : errors;
   });
 });
 
 app.get('/loggout', user.isAuthorized, (req, res, next) => {
-  res.redirect('/');
+  res.status(200).send("Unauthenticated");
 });
 
 app.get('/db_messages', (req, res, next) => {
   user.getHistory(user, errors, function(result) {
-    result.forEach(mess => {
-        mess.Message = `<div><b>${mess.Login}: </b> ${mess.Message}</div>`;
-    });
-    return result;
-});
-});
-
-//.get('/db_messages') => () => [{username, message}];
-//.post('/sign-up') => [{username, password}]; => username;
-//.post('/login') => [{username, password}]; => username; 
-
-//   socket.on('send admin message', (msg) => {
-//     io.emit('send', msg);
-//   });
-
-//   socket.on('join room', (data) => {
-//     socket.join(`room ${data.name}`);
-
-//     console.log('admin connected to room', data.name);
-
-//     io.to(`room ${data.name}`).emit('send', {
-//       ...data,
-//       event: 'private',
-//       user: data.name,
-//       time,
-//       name: 'admin',
-//     });
-//   });
-
-//   socket.on('operator logged out', () => {
-//     socket.emit('clear all messages');
-//   });
-
-//   socket.on('disconnect', () => {
-//     io.emit('delete users', username);
-//     console.log('user disconnected');
-//   });
+    console.log(result);
+    res.status(200).send(result);
+  });
 });
