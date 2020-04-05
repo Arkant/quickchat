@@ -107,10 +107,20 @@ app.get('/loggout', user.isAuthorized, (req, res, next) => {
 });
 
 app.get('/db_messages', (req, res, next) => {
+  let objForSend = [];
+
   user.getHistory(user, errors, function(result) {
-    console.log(result, 'DB MESSAGES RESULT');
-    if(result[1].length > 0)
-      res.status(200).send(result);
+    console.log(result[1], 'DB MESSAGES RESULT');
+    if(result[1].length > 0) {
+      result[1].forEach(elem => {
+        objForSend.push({
+          username: elem.Login,
+          message: elem.Message,
+          datetime: elem.DateTime
+        })
+      });
+      res.status(200).send(objForSend);
+    }
     else
       res.status(200).send([]);
   });
