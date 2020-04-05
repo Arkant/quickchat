@@ -28,7 +28,7 @@
 
 <script>
 export default {
-  name: 'Sign Up',
+  name: 'SignUp',
   data () {
     return {
       username: '',
@@ -49,8 +49,11 @@ export default {
       this.$store.dispatch('SIGN_UP_USER', {
         username: this.username,
         password: this.password
+      }).then((result) => {
+        this.$router.push('/chat')
+      }).catch((res) => {
+        console.error('Unauthenticated')
       })
-      this.$router.push('/chat')
     }
   }
 }

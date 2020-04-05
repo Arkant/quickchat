@@ -45,6 +45,7 @@ export default {
     send (e) {
       e.preventDefault()
       const msg = {
+        idUser: this.idUser,
         username: this.username,
         message: this.message.trim()
       }
@@ -53,10 +54,12 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['username'])
+    ...mapGetters(['username', 'idUser'])
   },
   created () {
-    this.messages = []
+    this.$store.dispatch('GET_MESSAGES').then((result) => {
+      this.messages = result
+    })
   },
   mounted () {
     this.socket.on('send_message', (data) => {

@@ -7,8 +7,6 @@ export default {
   mutations,
   actions,
   state: {
-    isAuthed: 'Unauthenticated',
-    username: '',
-    idUser: null
+    messages: []
   }
 }

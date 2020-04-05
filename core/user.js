@@ -83,39 +83,40 @@ User.prototype = {
         });
     },
     sent: false,
-    getHistory: function(errors, callback) {
-        let currUser = this;
-        let call = callback;
-        this.sent = true;
-        console.log(new Promise(function(resolve, reject) {
-            currUser.checkHistory(function(result) {
-                if(result[0]) {
-                    errors.push(new Error("CheckHistory error!" + result[1]));
-                } 
-                resolve(result[1]);
-            })
-        })
-        .then(function(result) {
-            let sql = `select Login, Message, DateTime from messages, user where user.idUser = messages.idUser`;
+    // getHistory: function(errors, callback) {
+    //     let currUser = this;
+    //     let call = callback;
+    //     this.sent = true;
+    //     console.log(new Promise(function(resolve, reject) {
+    //         currUser.checkHistory(function(result) {
+    //             if(result[0]) {
+    //                 errors.push(new Error("CheckHistory error!" + result[1]));
+    //             } 
+    //             resolve(result[1]);
+    //         })
+    //     })
+    //     .then(function(result) {
+    //         let sql = `select Login, Message, DateTime from messages, user where user.idUser = messages.idUser`;
         
-            pool.query(sql, function(err, result) {
-                if(err) {
-                    console.log("User.js getHistory error!" + err);
-                    errors.push(new Error("GetHistory error!" + err));
-                    call([1, err]);
-                }
-                call([0, result]);
-            });
-        })
-        .catch(function(err) {
-            console.log("User.js getHistory error!" + err);
-            call([1, err]);
-        }));
-    },
-    checkHistory: function(callback) {
+    //         pool.query(sql, function(err, result) {
+    //             if(err) {
+    //                 console.log("User.js getHistory error!" + err);
+    //                 errors.push(new Error("GetHistory error!" + err));
+    //                 call([1, err]);
+    //             }
+    //             call([0, result]);
+    //         });
+    //     })
+    //     .catch(function(err) {
+    //         console.log("User.js getHistory error!" + err);
+    //         call([1, err]);
+    //     }));
+    // },
+    /* TO-DO CHECK HISTORY ERRORS */
+    checkHistory: function(errors, callback) {
         let sql = `select DATE(DateTime) as LastMsg from messages ORDER BY idUser DESC LIMIT 1; select DATE(NOW()) as Now;`;
         let currUser = this;
-
+        console.log(errors, "ERRORS CHECKHISTORY")
         pool.query(sql, function(err, result) {
             if(err) {
                 console.log("User.js checkHistory error!" + err);
@@ -134,7 +135,7 @@ User.prototype = {
                     });
                 }
             }
-            //else callback([0]);
+            else callback([0]);
         });
     },
     deleteHistory: function(callback) {
@@ -164,6 +165,7 @@ User.prototype = {
                 } else {
                     console.log("History was loaded successfully...");
                 }
+                console.log(result);
                 resolve(result[1]);
             });
         })        

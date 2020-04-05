@@ -43,8 +43,11 @@ export default {
       this.$store.dispatch('LOGIN_USER', {
         username: this.username,
         password: this.password
+      }).then((result) => {
+        this.$router.push('/chat')
+      }).catch((res) => {
+        console.error('Unauthenticated')
       })
-      this.$router.push('/chat')
     }
   }
 }

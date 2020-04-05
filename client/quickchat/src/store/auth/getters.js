@@ -1,6 +1,9 @@
-const authData = state => state.authData
+const isAuthed = state => state.isAuthed
 const username = state => state.username
+const idUser = state => state.idUser
+
 export default {
-  authData,
-  username
+  isAuthed,
+  username,
+  idUser
 }

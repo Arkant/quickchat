@@ -15,6 +15,7 @@
           Quickchat
         </q-toolbar-title>
 
+        <h6 class="username" v-if="username !== ''">{{username}}</h6>
       </q-toolbar>
     </q-header>
 
@@ -31,7 +32,7 @@
         >
           Navigation
         </q-item-label>
-        <q-item clickable tag="a">
+        <q-item v-if="isAuthed === 'Unauthenticated'" clickable tag="a">
           <q-item-section avatar>
             <q-icon name="play_arrow" />
           </q-item-section>
@@ -39,7 +40,7 @@
             <q-item-label>Login</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a">
+        <q-item v-if="isAuthed === 'Unauthenticated'" clickable tag="a">
           <q-item-section avatar>
             <q-icon name="power_settings_new" />
           </q-item-section>
@@ -47,12 +48,20 @@
             <q-item-label>Sign Up</q-item-label>
           </q-item-section>
         </q-item>
-        <q-item clickable tag="a">
+        <q-item v-if="isAuthed === 'Authenticated'" clickable tag="a">
           <q-item-section avatar>
             <q-icon name="chat" />
           </q-item-section>
           <q-item-section @click="$router.push('/chat')">
             <q-item-label>Chat</q-item-label>
+          </q-item-section>
+        </q-item>
+        <q-item v-if="isAuthed === 'Authenticated'" clickable tag="a">
+          <q-item-section avatar>
+            <q-icon name="exit_to_app" />
+          </q-item-section>
+          <q-item-section @click="logout">
+            <q-item-label>Logout</q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
@@ -65,16 +74,36 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'MainLayout',
 
   components: {
   },
-
+  computed: {
+    ...mapGetters(['username', 'isAuthed'])
+  },
   data () {
     return {
       leftDrawerOpen: false
     }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('LOGOUT_USER')
+        .then(() => {
+          this.$router.push('/login')
+        })
+    }
   }
 }
 </script>
+
+<style scoped>
+.username {
+  margin: 0 !important;
+}
+.username:hover {
+  cursor: pointer;
+}
+</style>
