@@ -1,20 +1,23 @@
 <template>
   <q-page class="">
-    <q-chat-message
-      v-for="(message, index) in messages"
-      :key="index"
-      :name="message.username"
-      :text="[message.message]"
-    />
+    <div style="padding-bottom: 100px">
+      <q-chat-message
+        v-for="(message, index) in messages"
+        :key="index"
+        :sent="message.username === username ? true : false"
+        :name="`<b>${message.username}</b>`"
+        :stamp="message.datetime.split(/[T Z .]/)[1]"
+        :text="[message.message]"
+      />
+    </div>
     <div class="flex fixed-bottom">
       <q-input
-        fixed
         fixed-bottom
         v-model="message"
-        v-on:keyup.enter="send"
+        @keyup.enter="send"
         type="textarea"
         class="input"
-        float-label="Type in your message"
+        label="Type in your message"
         rows="3"
       />
     </div>
@@ -40,14 +43,16 @@ export default {
   },
   methods: {
     send (e) {
-      e.preventDefault()
-      const msg = {
-        idUser: this.idUser,
-        username: this.username,
-        message: this.message.trim()
+      if (this.message.trim().length > 0) {
+        e.preventDefault()
+        const msg = {
+          idUser: this.idUser,
+          username: this.username,
+          message: this.message.trim()
+        }
+        this.socket.emit('send_message', msg)
+        this.message = ''
       }
-      this.socket.emit('send_message', msg)
-      this.message = ''
     }
   },
   computed: {
@@ -88,6 +93,7 @@ export default {
   padding-left: 8px;
   font-size: 20px;
   border: 1px solid #1976d2;
+  background: white;
 }
 .q-field__native {
   height: 50px;

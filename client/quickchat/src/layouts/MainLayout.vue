@@ -66,10 +66,11 @@
         </q-item>
       </q-list>
     </q-drawer>
-
-    <q-page-container>
-      <router-view />
-    </q-page-container>
+    <div :class="{'disabled': leftDrawerOpen}">
+      <q-page-container>
+        <router-view />
+      </q-page-container>
+    </div>
   </q-layout>
 </template>
 
@@ -105,5 +106,7 @@ export default {
 }
 .username:hover {
   cursor: pointer;
+}
+.disabled {
 }
 </style>
