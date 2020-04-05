@@ -22,7 +22,7 @@ app.use(session({
       maxAge: 24 * 3600000
   }
 }));
-
+/* TO-DO CHECK TRY CATCH FOR MESSAGES */
 io.on('connection', (socket) => {
   io.emit('addition of connected user', socket.id);
   //   console.log('user connected to', roomname);
@@ -33,12 +33,13 @@ io.on('connection', (socket) => {
 
   const time = (new Date()).toLocaleTimeString();
 
-  socket.on('send_message', ({ username, message }) => {
+  socket.on('send_message', ({ idUser, username, message }) => {
     io.sockets.emit('send_message', {
+      idUser,
       username,
       message,
     });
-    // user.saveMessage(idUser, message); // тут бы в DATA пробросить нужно UserID, чтобы запись в БД сделать
+    user.saveMessage(idUser, message); // тут бы в DATA пробросить нужно UserID, чтобы запись в БД сделать
   });
 });
 
@@ -102,7 +103,7 @@ app.get('/loggout', user.isAuthorized, (req, res, next) => {
 
 app.get('/db_messages', (req, res, next) => {
   user.getHistory(user, errors, function(result) {
-    console.log(result);
+    console.log(result, 'DB MESSAGES RESULT');
     res.status(200).send(result);
   });
 });
