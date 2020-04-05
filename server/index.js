@@ -39,7 +39,12 @@ io.on('connection', (socket) => {
       username,
       message,
     });
-    user.saveMessage(idUser, message); // тут бы в DATA пробросить нужно UserID, чтобы запись в БД сделать
+    try {
+      user.saveMessage(idUser, message);
+    } catch (error) {
+      console.log("Something went wrong with saving message!" + err);
+      errors.push(error);
+    }
   });
 });
 
@@ -104,6 +109,9 @@ app.get('/loggout', user.isAuthorized, (req, res, next) => {
 app.get('/db_messages', (req, res, next) => {
   user.getHistory(user, errors, function(result) {
     console.log(result, 'DB MESSAGES RESULT');
-    res.status(200).send(result);
+    if(result[1].length > 0)
+      res.status(200).send(result);
+    else
+      res.status(200).send([]);
   });
 });

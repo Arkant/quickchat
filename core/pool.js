@@ -4,8 +4,8 @@ const util = require('util');
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'root',
-    database: "mydb",
+    password: '11111211111',
+    database: "chat",
     multipleStatements: true
 });
 

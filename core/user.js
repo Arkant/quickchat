@@ -83,61 +83,6 @@ User.prototype = {
         });
     },
     sent: false,
-    // getHistory: function(errors, callback) {
-    //     let currUser = this;
-    //     let call = callback;
-    //     this.sent = true;
-    //     console.log(new Promise(function(resolve, reject) {
-    //         currUser.checkHistory(function(result) {
-    //             if(result[0]) {
-    //                 errors.push(new Error("CheckHistory error!" + result[1]));
-    //             } 
-    //             resolve(result[1]);
-    //         })
-    //     })
-    //     .then(function(result) {
-    //         let sql = `select Login, Message, DateTime from messages, user where user.idUser = messages.idUser`;
-        
-    //         pool.query(sql, function(err, result) {
-    //             if(err) {
-    //                 console.log("User.js getHistory error!" + err);
-    //                 errors.push(new Error("GetHistory error!" + err));
-    //                 call([1, err]);
-    //             }
-    //             call([0, result]);
-    //         });
-    //     })
-    //     .catch(function(err) {
-    //         console.log("User.js getHistory error!" + err);
-    //         call([1, err]);
-    //     }));
-    // },
-    /* TO-DO CHECK HISTORY ERRORS */
-    checkHistory: function(errors, callback) {
-        let sql = `select DATE(DateTime) as LastMsg from messages ORDER BY idUser DESC LIMIT 1; select DATE(NOW()) as Now;`;
-        let currUser = this;
-        console.log(errors, "ERRORS CHECKHISTORY")
-        pool.query(sql, function(err, result) {
-            if(err) {
-                console.log("User.js checkHistory error!" + err);
-                callback([1, err]);
-            }
-            else if((result[0])[0] != undefined) {
-                if(((result[0])[0].LastMsg).toString() == ((result[1])[0].Now).toString()) {
-                    callback([0]);
-                } else {
-                    console.log("They`re gonna be cleared all.....");
-                    currUser.deleteHistory(function(deleted) {
-                        if(deleted[0]) {
-                            callback([1, deleted[1]]);
-                        }
-                        else callback([0]);
-                    });
-                }
-            }
-            else callback([0]);
-        });
-    },
     deleteHistory: function(callback) {
         let sql = `delete from messages where IDmessage >= 0`;
         pool.query(sql, function(err, result) {
@@ -157,9 +102,36 @@ User.prototype = {
             });
         } else next();
     },
+    checkHistory: function(errors, callback) {
+        let sql = `select DATE(DateTime) as LastMsg from messages ORDER BY idUser DESC LIMIT 1; select DATE(NOW()) as Now;`;
+        let currUser = this;
+        console.log(errors, "ERRORS CHECKHISTORY")
+        pool.query(sql, function(err, result) {
+            if(err) {
+                console.log("User.js checkHistory error!" + err);
+                callback([1, err]);
+            }
+            else if((result[0])[0] != undefined) {
+                if(((result[0])[0].LastMsg).toString() == ((result[1])[0].Now).toString()) {
+                    console.log(result);
+                    callback([0]);
+                } else {
+                    console.log("They`re gonna be cleared all.....");
+                    currUser.deleteHistory(function(deleted) {
+                        if(deleted[0]) {
+                            callback([1, deleted[1]]);
+                        }
+                        else callback([0]);
+                    });
+                }
+            }
+            else callback([0]);
+        });
+    },
     getHistory: function(user, errors, callback) {
+        let currUser = this;
         new Promise(function(resolve, reject) {
-            user.checkHistory(errors, function(result) {
+            currUser.checkHistory(errors, function(result) {
                 if(result[0]) {
                     errors.push(new Error("Can`t load messages history!" + result[1]));
                 } else {
@@ -170,19 +142,20 @@ User.prototype = {
             });
         })        
         .then(function(result) {
-            // console.log(result);
-            if(!user.sent) {
-                errors.push(new Error("Message wasn`t saved!"));
-            }
-            return result;
-        })
-        .then(function(result) {
-            // console.log(result);
-            callback(result);
+            let sql = `select Login, Message, DateTime from messages, user where user.idUser = messages.idUser`;
+        
+            pool.query(sql, function(err, result) {
+                if(err) {
+                    console.log("User.js getHistory error!" + err);
+                    errors.push(new Error("GetHistory error!" + err));
+                    callback([1, err]);
+                }
+                callback([0, result]);
+            });
         })
         .catch(function(err) {
-            //errors.push(new Error("Can`t load messages history! Error code" + err));
-            console.log(err);
+            console.log("User.js getHistory error!" + err);
+            callback([1, err]);
         });
     }
 }
