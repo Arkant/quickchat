@@ -12,7 +12,7 @@ const SIGN_UP_USER_SUCCESS = (state, payload) => {
 }
 
 const LOGOUT_SUCCESS = (state) => {
-  state.isAuthed = 'Unathenticated'
+  state.isAuthed = 'Unauthenticated'
   state.username = ''
   state.idUser = null
 }

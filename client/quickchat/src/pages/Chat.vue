@@ -6,21 +6,18 @@
       :name="message.username"
       :text="[message.message]"
     />
-    <q-input
-      fixed
-      fixed-bottom
-      v-model="message"
-      v-on:keyup.enter="send"
-      type="textarea"
-      float-label="Your message"
-      :max-height="50"
-      rows="3"
-    />
-    <q-btn
-      @click="send"
-      color="primary"
-      :label="'Send'"
-    />
+    <div class="flex fixed-bottom">
+      <q-input
+        fixed
+        fixed-bottom
+        v-model="message"
+        v-on:keyup.enter="send"
+        type="textarea"
+        class="input"
+        float-label="Type in your message"
+        rows="3"
+      />
+    </div>
   </q-page>
 </template>
 
@@ -82,3 +79,17 @@ export default {
   }
 }
 </script>
+<style scoped>
+.q-textarea{
+  height: 50px;
+}
+.input {
+  width: 100%;
+  padding-left: 8px;
+  font-size: 20px;
+  border: 1px solid #1976d2;
+}
+.q-field__native {
+  height: 50px;
+}
+</style>
