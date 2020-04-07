@@ -33,11 +33,12 @@ io.on('connection', (socket) => {
 
   const time = (new Date()).toLocaleTimeString();
 
-  socket.on('send_message', ({ idUser, username, message }) => {
+  socket.on('send_message', ({ idUser, username, message, datetime }) => {
     io.sockets.emit('send_message', {
       idUser,
       username,
       message,
+      datetime,
     });
     try {
       user.saveMessage(idUser, message);
