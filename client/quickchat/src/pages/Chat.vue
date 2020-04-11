@@ -6,7 +6,7 @@
         :key="index"
         :sent="message.username === username ? true : false"
         :name="`<b>${message.username}</b>`"
-        :stamp="message.datetime.split(/[T Z .]/)[1]"
+        :stamp="message.datetime.split(/[T Z .]/)[1] || message.datetime"
         :text="[message.message]"
       />
     </div>
@@ -14,7 +14,7 @@
       <q-input
         fixed-bottom
         v-model="message"
-        @keyup.enter="send"
+        v-on:keyup.enter="send"
         type="textarea"
         class="input"
         label="Type in your message"
@@ -38,7 +38,7 @@ export default {
       admin: '',
       message: '',
       messages: [],
-      socket: io('localhost:3001')
+      socket: io('https://fast-peak-37701.herokuapp.com')
     }
   },
   methods: {
@@ -48,7 +48,8 @@ export default {
         const msg = {
           idUser: this.idUser,
           username: this.username,
-          message: this.message.trim()
+          message: this.message.trim(),
+          datetime: new Date().toLocaleTimeString()
         }
         this.socket.emit('send_message', msg)
         this.message = ''

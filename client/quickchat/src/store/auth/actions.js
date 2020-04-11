@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const LOGIN_USER = async ({ commit }, payload) => {
-  const result = await axios.post('http://localhost:3001/login', payload)
+  const result = await axios.post('https://fast-peak-37701.herokuapp.com/login', payload)
   if (result.status === 200 && result.data[1] === 'Authenticated') {
     commit('LOGIN_USER_SUCCESS', result.data)
   }
@@ -9,7 +9,7 @@ const LOGIN_USER = async ({ commit }, payload) => {
 }
 
 const SIGN_UP_USER = async ({ commit }, payload) => {
-  const result = await axios.post('http://localhost:3001/sign-up', payload)
+  const result = await axios.post('https://fast-peak-37701.herokuapp.com/sign-up', payload)
   if (result.status === 200 && result.data[1] === 'Authenticated') {
     commit('SIGN_UP_USER_SUCCESS', result.data)
   }
@@ -17,7 +17,7 @@ const SIGN_UP_USER = async ({ commit }, payload) => {
 }
 
 const LOGOUT_USER = async ({ commit }) => {
-  const result = await axios.get('http://localhost:3001/loggout')
+  const result = await axios.get('https://fast-peak-37701.herokuapp.com/loggout')
   if (result.status !== 200) {
     return new Error('Could not logout')
   }

@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const GET_MESSAGES = async ({ commit }, payload) => {
-  const result = await axios.get('http://localhost:3001/db_messages', payload)
+  const result = await axios.get('https://fast-peak-37701.herokuapp.com/db_messages', payload)
   if (result.status === 200) {
     if (result.data === undefined) {
       return []
