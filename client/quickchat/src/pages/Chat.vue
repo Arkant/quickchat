@@ -62,6 +62,16 @@ export default {
   created () {
     this.$store.dispatch('GET_MESSAGES').then((result) => {
       this.messages = result
+    }).then(res => res).catch(err => {
+      console.err(err)
+      this.$q.notify({
+        color: 'red',
+        textColor: 'white',
+        icon: 'report_problem',
+        message: 'Could not load DB messages',
+        position: 'top-right',
+        timeout: Math.random() * 5000 + 3000
+      })
     })
   },
   mounted () {

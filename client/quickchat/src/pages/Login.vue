@@ -46,7 +46,18 @@ export default {
       }).then((result) => {
         this.$router.push('/chat')
       }).catch((res) => {
-        console.error('Unauthenticated')
+        this.showNotif('top-right', 'Wrong credentials!')
+        console.error('Wrong credentials!')
+      })
+    },
+    showNotif (position, message) {
+      this.$q.notify({
+        color: 'red',
+        textColor: 'white',
+        icon: 'report_problem',
+        message,
+        position,
+        timeout: Math.random() * 5000 + 3000
       })
     }
   }
