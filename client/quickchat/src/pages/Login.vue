@@ -46,6 +46,7 @@ export default {
       }).then((result) => {
         this.$router.push('/chat')
       }).catch((res) => {
+        this.$store.dispatch('SHOW_LOADER', false)
         this.showNotif('top-right', 'Wrong credentials!')
         console.error('Wrong credentials!')
       })

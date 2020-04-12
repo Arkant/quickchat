@@ -18,7 +18,6 @@ import { mapGetters } from 'vuex'
 export default {
   name: 'App',
   mounted () {
-    console.log(this.$store)
     this.$router.push('/login')
   },
   computed: {

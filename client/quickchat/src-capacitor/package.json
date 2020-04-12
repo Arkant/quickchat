@@ -1,0 +1,12 @@
+{
+  "name": "quickchat",
+  "version": "0.0.1",
+  "description": "A Quasar Framework app",
+  "author": "Arkant <pan_rostislav@ukr.net>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^2.0.1",
+    "@capacitor/cli": "^1.0.0",
+    "@capacitor/core": "^1.0.0"
+  }
+}

@@ -63,6 +63,7 @@ export default {
     this.$store.dispatch('GET_MESSAGES').then((result) => {
       this.messages = result
     }).then(res => res).catch(err => {
+      this.$store.dispatch('SHOW_LOADER', false)
       console.err(err)
       this.$q.notify({
         color: 'red',

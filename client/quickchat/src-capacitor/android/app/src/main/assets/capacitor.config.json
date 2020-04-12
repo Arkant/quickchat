@@ -1,0 +1,7 @@
+{
+  "appId": "com.quickchat",
+  "appName": "Quickchat",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www"
+}

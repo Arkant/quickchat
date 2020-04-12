@@ -52,6 +52,7 @@ export default {
       }).then((result) => {
         this.$router.push('/chat')
       }).catch((res) => {
+        this.$store.dispatch('SHOW_LOADER', false)
         this.showNotif('top-right', 'Could not sign-up. Try again later.')
         console.error('Could not sign-up. Try again later.')
       })
